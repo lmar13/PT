@@ -130,8 +130,6 @@ namespace PT_137131.ViewModel
             if (obj is not FileInfoViewModel) return;
             FileInfoViewModel viewModel = (FileInfoViewModel)obj;
             OnCreateFileRequest.Invoke(this, viewModel);
-            
-            
         }
 
         public void CreateFile(FileInfoViewModel viewModel)
