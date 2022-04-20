@@ -7,6 +7,7 @@ using System.IO;
 using System.Diagnostics;
 using System.ComponentModel;
 using System.Globalization;
+using PT_137131.ViewModel;
 
 namespace PT_137131
 {
@@ -22,18 +23,40 @@ namespace PT_137131
             fileExplorer = new FileExplorer();
             DataContext = fileExplorer;
             fileExplorer.PropertyChanged += OnFileExplorerPropertyChanged;
+            fileExplorer.OnOpenFileRequest += OnOpenFileRequest;
+            fileExplorer.OnCreateFileRequest += OnCreateFileRequest;
+            fileExplorer.OnDeleteFileRequest += OnDeleteFileRequest;
         }
 
-        private void OnOpenCommand(object sender, RoutedEventArgs e)
+        private void OnOpenFileRequest(object? sender, FileInfoViewModel e)
         {
-            using var dialog = new FolderBrowserDialog() { Description = "Select directory to open" };
-            if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            var content = fileExplorer.GetFileContent(e);
+            if (content is string text)
             {
-                var path = dialog.SelectedPath;
-                fileExplorer.OpenRoot(path);
-                DataContext = fileExplorer;
+                textBlock.Text = text;
             }
         }
+
+        private void OnCreateFileRequest(object? sender, FileInfoViewModel e)
+        {
+            fileExplorer.CreateFile(e);
+        }
+
+        private void OnDeleteFileRequest(object? sender, FileInfoViewModel e)
+        {
+            fileExplorer.DeleteFile(e);
+        }
+
+        //private void OnOpenCommand(object sender, RoutedEventArgs e)
+        //{
+        //    using var dialog = new FolderBrowserDialog() { Description = "Select directory to open" };
+        //    if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+        //    {
+        //        var path = dialog.SelectedPath;
+        //        fileExplorer.OpenRoot(path);
+        //        DataContext = fileExplorer;
+        //    }
+        //}
 
         private void OnCloseCommand(object sender, RoutedEventArgs e)
         {
@@ -86,26 +109,26 @@ namespace PT_137131
         //    e.Handled = true;
         //}
 
-        private void OnSelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
-        {
-            FileSystemInfoViewModel item = (FileSystemInfoViewModel)e.NewValue;
-            if (item == null) return; 
-            fileAttText.Text = ConvertFileAttributesToRashString(item.Model.Attributes);
+        //private void OnSelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        //{
+        //    FileSystemInfoViewModel item = (FileSystemInfoViewModel)e.NewValue;
+        //    if (item == null) return; 
+        //    fileAttText.Text = ConvertFileAttributesToRashString(item.Model.Attributes);
 
-            if (!File.Exists(item.Model.FullName)) return;
+        //    if (!File.Exists(item.Model.FullName)) return;
 
-            var fileExtension = item.Model.Extension;
-            if (fileExtension.Equals(".txt", StringComparison.OrdinalIgnoreCase))
-            {
-                using var textReader = File.OpenText(item.Model.FullName);
-                string text = textReader.ReadToEnd();
-                textBlock.Text = text;
-            }
-            else
-            {
-                System.Windows.MessageBox.Show("Unsupported file format.");
-            }
-        }
+        //    var fileExtension = item.Model.Extension;
+        //    if (fileExtension.Equals(".txt", StringComparison.OrdinalIgnoreCase))
+        //    {
+        //        using var textReader = File.OpenText(item.Model.FullName);
+        //        string text = textReader.ReadToEnd();
+        //        textBlock.Text = text;
+        //    }
+        //    else
+        //    {
+        //        System.Windows.MessageBox.Show("Unsupported file format.");
+        //    }
+        //}
 
         //private void CreateTreeView(TreeViewItem item)
         //{
@@ -218,9 +241,9 @@ namespace PT_137131
             string rash = "";
 
             if (fileAttribute.HasFlag(FileAttributes.ReadOnly)) rash += "r";
-            else if (fileAttribute.HasFlag(FileAttributes.Archive)) rash += "a";
-            else if (fileAttribute.HasFlag(FileAttributes.System)) rash += "s";
-            else if (fileAttribute.HasFlag(FileAttributes.Hidden)) rash += "h";
+            if (fileAttribute.HasFlag(FileAttributes.Archive)) rash += "a";
+            if (fileAttribute.HasFlag(FileAttributes.System)) rash += "s";
+            if (fileAttribute.HasFlag(FileAttributes.Hidden)) rash += "h";
             else rash += "-";
 
             return rash;

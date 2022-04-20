@@ -10,9 +10,15 @@
     <Compile Update="CreateDialog.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="DialogWindow\SortingDialog.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Page Update="CreateDialog.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="DialogWindow\SortingDialog.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="MainWindow.xaml">

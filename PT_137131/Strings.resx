@@ -141,4 +141,37 @@
   <data name="Delete_Directory" xml:space="preserve">
     <value>Delete Directory</value>
   </data>
+  <data name="Directory_Description" xml:space="preserve">
+    <value>Select directory to open</value>
+  </data>
+  <data name="Open_File" xml:space="preserve">
+    <value>Open File</value>
+  </data>
+  <data name="Sorting" xml:space="preserve">
+    <value>Sorting</value>
+  </data>
+  <data name="Sort_Alphabetically" xml:space="preserve">
+    <value>Alphabetically</value>
+  </data>
+  <data name="Sort_By" xml:space="preserve">
+    <value>Sort by:</value>
+  </data>
+  <data name="Sort_Extensions" xml:space="preserve">
+    <value>Extensions</value>
+  </data>
+  <data name="Sort_Modification_Date" xml:space="preserve">
+    <value>Modification Date</value>
+  </data>
+  <data name="Sort_Order" xml:space="preserve">
+    <value>Sort order:</value>
+  </data>
+  <data name="Sort_Size" xml:space="preserve">
+    <value>Size</value>
+  </data>
+  <data name="Ascending_Order" xml:space="preserve">
+    <value>Ascending</value>
+  </data>
+  <data name="Descending_Order" xml:space="preserve">
+    <value>Descending</value>
+  </data>
 </root>

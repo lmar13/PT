@@ -61,6 +61,15 @@ namespace PT_137131 {
         }
         
         /// <summary>
+        /// Wyszukuje zlokalizowany ciąg podobny do ciągu Ascending.
+        /// </summary>
+        public static string Ascending_Order {
+            get {
+                return ResourceManager.GetString("Ascending_Order", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         /// Wyszukuje zlokalizowany ciąg podobny do ciągu Close.
         /// </summary>
         public static string Close {
@@ -97,6 +106,24 @@ namespace PT_137131 {
         }
         
         /// <summary>
+        /// Wyszukuje zlokalizowany ciąg podobny do ciągu Descending.
+        /// </summary>
+        public static string Descending_Order {
+            get {
+                return ResourceManager.GetString("Descending_Order", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        /// Wyszukuje zlokalizowany ciąg podobny do ciągu Select directory to open.
+        /// </summary>
+        public static string Directory_Description {
+            get {
+                return ResourceManager.GetString("Directory_Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         /// Wyszukuje zlokalizowany ciąg podobny do ciągu File.
         /// </summary>
         public static string File {
@@ -124,11 +151,83 @@ namespace PT_137131 {
         }
         
         /// <summary>
+        /// Wyszukuje zlokalizowany ciąg podobny do ciągu Open File.
+        /// </summary>
+        public static string Open_File {
+            get {
+                return ResourceManager.GetString("Open_File", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         /// Wyszukuje zlokalizowany ciąg podobny do ciągu Select file to display its content.
         /// </summary>
         public static string Placeholder {
             get {
                 return ResourceManager.GetString("Placeholder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        /// Wyszukuje zlokalizowany ciąg podobny do ciągu Alphabetically.
+        /// </summary>
+        public static string Sort_Alphabetically {
+            get {
+                return ResourceManager.GetString("Sort_Alphabetically", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        /// Wyszukuje zlokalizowany ciąg podobny do ciągu Sort by:.
+        /// </summary>
+        public static string Sort_By {
+            get {
+                return ResourceManager.GetString("Sort_By", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        /// Wyszukuje zlokalizowany ciąg podobny do ciągu Extensions.
+        /// </summary>
+        public static string Sort_Extensions {
+            get {
+                return ResourceManager.GetString("Sort_Extensions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        /// Wyszukuje zlokalizowany ciąg podobny do ciągu Modification Date.
+        /// </summary>
+        public static string Sort_Modification_Date {
+            get {
+                return ResourceManager.GetString("Sort_Modification_Date", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        /// Wyszukuje zlokalizowany ciąg podobny do ciągu Sort order:.
+        /// </summary>
+        public static string Sort_Order {
+            get {
+                return ResourceManager.GetString("Sort_Order", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        /// Wyszukuje zlokalizowany ciąg podobny do ciągu Size.
+        /// </summary>
+        public static string Sort_Size {
+            get {
+                return ResourceManager.GetString("Sort_Size", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        /// Wyszukuje zlokalizowany ciąg podobny do ciągu Sorting.
+        /// </summary>
+        public static string Sorting {
+            get {
+                return ResourceManager.GetString("Sorting", resourceCulture);
             }
         }
     }

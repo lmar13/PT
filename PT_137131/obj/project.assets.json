@@ -14,11 +14,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "\\\\Mac\\Home\\Documents\\Studia_mgr\\Platformy Technologiczne\\Laborki\\Projekt\\PT_137131\\PT_137131\\PT_137131.csproj",
+      "projectUniqueName": "\\\\Mac\\Home\\Documents\\Studia_mgr\\Platformy Technologiczne\\Laborki\\Projekt\\PT\\PT_137131\\PT_137131.csproj",
       "projectName": "PT_137131",
-      "projectPath": "\\\\Mac\\Home\\Documents\\Studia_mgr\\Platformy Technologiczne\\Laborki\\Projekt\\PT_137131\\PT_137131\\PT_137131.csproj",
+      "projectPath": "\\\\Mac\\Home\\Documents\\Studia_mgr\\Platformy Technologiczne\\Laborki\\Projekt\\PT\\PT_137131\\PT_137131.csproj",
       "packagesPath": "C:\\Users\\lmar\\.nuget\\packages\\",
-      "outputPath": "\\\\Mac\\Home\\Documents\\Studia_mgr\\Platformy Technologiczne\\Laborki\\Projekt\\PT_137131\\PT_137131\\obj\\",
+      "outputPath": "\\\\Mac\\Home\\Documents\\Studia_mgr\\Platformy Technologiczne\\Laborki\\Projekt\\PT\\PT_137131\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

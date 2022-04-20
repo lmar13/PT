@@ -4,17 +4,17 @@
 winexe
 C#
 .cs
-\\Mac\Home\Documents\Studia_mgr\Platformy Technologiczne\Laborki\Projekt\PT_137131\PT_137131\obj\Debug\net6.0-windows\
+\\Mac\Home\Documents\Studia_mgr\Platformy Technologiczne\Laborki\Projekt\PT\PT_137131\obj\Debug\net6.0-windows\
 PT_137131
 none
 false
 TRACE;DEBUG;NET;NET6_0;NETCOREAPP
-\\Mac\Home\Documents\Studia_mgr\Platformy Technologiczne\Laborki\Projekt\PT_137131\PT_137131\App.xaml
-21065834956
+\\Mac\Home\Documents\Studia_mgr\Platformy Technologiczne\Laborki\Projekt\PT\PT_137131\App.xaml
+3-1751077074
 
-15-2000950886
+21-173373702
 203-1089966206
-CreateDialog.xaml;MainWindow.xaml;
+CreateDialog.xaml;DialogWindow\SortingDialog.xaml;MainWindow.xaml;
 
 False
 

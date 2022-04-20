@@ -8,7 +8,7 @@ using System.Windows.Data;
 
 namespace PT_137131
 {
-    public class LangBoolConverter: IValueConverter
+    public class LangBoolConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
@@ -17,10 +17,11 @@ namespace PT_137131
             return false;
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        public object? ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if ((bool)value == true) return (string)parameter;
             return null;
         }
+
     }
 }
