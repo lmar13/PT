@@ -48,6 +48,9 @@
                         <MouseBinding MouseAction="LeftDoubleClick"
                             Command="{Binding OpenFileCommand}"
                             CommandParameter="{Binding}" />
+                        <MouseBinding MouseAction="LeftClick"
+                            Command="{Binding SelectFileCommand}"
+                            CommandParameter="{Binding}" />
                     </TextBlock.InputBindings>
                 </TextBlock>
             </StackPanel>

@@ -26,6 +26,7 @@ namespace PT_137131
             fileExplorer.OnOpenFileRequest += OnOpenFileRequest;
             fileExplorer.OnCreateFileRequest += OnCreateFileRequest;
             fileExplorer.OnDeleteFileRequest += OnDeleteFileRequest;
+            fileExplorer.OnSelectFileRequest += OnSelectFileRequest;
         }
 
         private void OnOpenFileRequest(object? sender, FileInfoViewModel e)
@@ -45,6 +46,15 @@ namespace PT_137131
         private void OnDeleteFileRequest(object? sender, FileInfoViewModel e)
         {
             fileExplorer.DeleteFile(e);
+        }
+
+        private void OnSelectFileRequest(object? sender, FileInfoViewModel e)
+        {
+            var content = fileExplorer.GetFileAttributes(e);
+            if (content is string text)
+            {
+                fileAttText.Text = text;
+            }
         }
 
         //private void OnOpenCommand(object sender, RoutedEventArgs e)

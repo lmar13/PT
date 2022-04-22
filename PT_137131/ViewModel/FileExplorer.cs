@@ -24,6 +24,7 @@ namespace PT_137131.ViewModel
         public event EventHandler<FileInfoViewModel> OnOpenFileRequest;
         public event EventHandler<FileInfoViewModel> OnCreateFileRequest;
         public event EventHandler<FileInfoViewModel> OnDeleteFileRequest;
+        public event EventHandler<FileInfoViewModel> OnSelectFileRequest;
 
         public ICommand OpenRootFolderCommand { get; private set; }
         public ICommand SortRootFolderCommand { get; private set; }
@@ -31,6 +32,7 @@ namespace PT_137131.ViewModel
         public ICommand OpenFileCommand { get; private set; }
         public ICommand CreateFileCommand { get; private set; }
         public ICommand DeleteFileCommand { get; private set; }
+        public ICommand SelecFileCommand { get; private set; }
 
         public DirectoryInfoViewModel Root
         {
@@ -84,6 +86,7 @@ namespace PT_137131.ViewModel
 
             CreateFileCommand = new RelayCommand(OnCreateFileCommand);
             DeleteFileCommand = new RelayCommand(OnDeleteFileCommand);
+            SelecFileCommand = new RelayCommand(OnSelectFileCommand);
         }
 
         public string GetFileContent(FileInfoViewModel viewModel)
@@ -105,6 +108,12 @@ namespace PT_137131.ViewModel
                 result = textReader.ReadToEnd();
             }
             return result;
+        }
+
+        public string GetFileAttributes(FileInfoViewModel viewModel)
+        {
+            FileAttributes fileAttribute = File.GetAttributes(viewModel.Model.FullName);
+            return ConvertFileAttributesToRashString(fileAttribute);
         }
 
         private void OnOpenFileCommand(object obj)
@@ -179,6 +188,13 @@ namespace PT_137131.ViewModel
             NotifyPropertyChanged();
         }
 
+        private void OnSelectFileCommand(object obj)
+        {
+            if (obj is not FileInfoViewModel) return;
+            FileInfoViewModel viewModel = (FileInfoViewModel)obj;
+            OnSelectFileRequest.Invoke(this, viewModel);
+        }
+
         private void OnSortingPropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             Root.Sort(Sorting);
@@ -238,6 +254,19 @@ namespace PT_137131.ViewModel
 
             if (dialog.systemAtt.IsChecked != null ? (bool)dialog.systemAtt.IsChecked : false)
                 File.SetAttributes(path, File.GetAttributes(path) | FileAttributes.System);
+        }
+
+        private string ConvertFileAttributesToRashString(FileAttributes fileAttribute)
+        {
+            string rash = "";
+
+            if (fileAttribute.HasFlag(FileAttributes.ReadOnly)) rash += "r";
+            if (fileAttribute.HasFlag(FileAttributes.Archive)) rash += "a";
+            if (fileAttribute.HasFlag(FileAttributes.System)) rash += "s";
+            if (fileAttribute.HasFlag(FileAttributes.Hidden)) rash += "h";
+            else rash += "-";
+
+            return rash;
         }
     }
 }

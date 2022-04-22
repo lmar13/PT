@@ -14,6 +14,7 @@ namespace PT_137131.ViewModel
         public ICommand OpenFileCommand { get; private set; }
         public ICommand CreateFileCommand { get; private set; }
         public ICommand DeleteFileCommand { get; private set; }
+        public ICommand SelectFileCommand { get; private set; }
 
         public new string ImageSource
         {
@@ -38,6 +39,7 @@ namespace PT_137131.ViewModel
             OpenFileCommand = new RelayCommand(OnOpenFileCommand, CanExecuteOnOpenFileCommand);
             CreateFileCommand = new RelayCommand(OnCreateFileCommand);
             DeleteFileCommand = new RelayCommand(OnDeleteFileCommand);
+            SelectFileCommand = new RelayCommand(OnSelectFileCommand);
         }
 
         private bool CanExecuteOnOpenFileCommand(object obj)
@@ -58,6 +60,11 @@ namespace PT_137131.ViewModel
         private void OnDeleteFileCommand(object obj)
         {
             OwnerExplorer.DeleteFileCommand.Execute(obj);
+        }
+
+        private void OnSelectFileCommand(object obj)
+        {
+            OwnerExplorer.SelecFileCommand.Execute(obj);
         }
     }
 }
