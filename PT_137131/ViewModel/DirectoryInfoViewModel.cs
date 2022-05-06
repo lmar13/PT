@@ -2,9 +2,13 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -15,8 +19,44 @@ namespace PT_137131.ViewModel
         private FileSystemWatcher? watcher;
         private string? path;
         private string imageSource = "Resources/folder.png";
+        private CancellationToken token;
 
-        public DirectoryInfoViewModel(ViewModelBase owner): base(owner) { }
+        public DirectoryInfoViewModel(ViewModelBase owner): base(owner) 
+        {
+            Items.CollectionChanged += Items_CollectionChanged;
+        }
+
+        private void Items_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs args)
+        {
+            switch (args.Action)
+            {
+                case NotifyCollectionChangedAction.Add:
+                    foreach (var item in args.NewItems.Cast<FileSystemInfoViewModel>())
+                    {
+                        item.PropertyChanged += Item_PropertyChanged;
+                    }
+                    break;
+                case NotifyCollectionChangedAction.Remove:
+                    foreach (var item in args.NewItems.Cast<FileSystemInfoViewModel>())
+                    {
+                        item.PropertyChanged -= Item_PropertyChanged;
+                    }
+                    break;
+            }
+        }
+
+        private void Item_PropertyChanged(object? sender, PropertyChangedEventArgs args)
+        {
+            if (args.PropertyName == "StatusMessage" && sender is FileSystemInfoViewModel viewModel)
+            {
+                this.StatusMessage = viewModel.StatusMessage;
+            }
+
+            if (args.PropertyName == "CurrentMaxThread" && sender is FileSystemInfoViewModel viewModelThread)
+            {
+                CurrentMaxThread = viewModelThread.CurrentMaxThread;
+            }
+        }
 
         public new FileSystemInfo? Model
         {
@@ -48,7 +88,7 @@ namespace PT_137131.ViewModel
 
         public new string ImageSource { get => imageSource; private set { } }
 
-        public ObservableCollection<FileSystemInfoViewModel> Items { get; private set; } = new ObservableCollection<FileSystemInfoViewModel>();
+        public DispatchedObservableCollection<FileSystemInfoViewModel> Items { get; private set; } = new DispatchedObservableCollection<FileSystemInfoViewModel>();
         public Exception? Exception { get; private set; }
 
         public void OnFileSystemChanged(object sender, FileSystemEventArgs e)
@@ -57,36 +97,90 @@ namespace PT_137131.ViewModel
             Application.Current.Dispatcher.Invoke(() => OnFileSystemChanged(e));
         }
 
-        public bool Open(string path)
+        public bool Open(string path, CancellationToken token)
         {
+            this.token = token;
             this.path = path;
-            bool result = false;
+
             try
             {
                 Items.Clear();
-                ReadCatalogs();
-                ReadFiles();
-                result = true;
+                ReadCatalogs(token);
+                ReadFiles(token);
             }
-            catch (Exception ex)
+            catch (OperationCanceledException exception)
             {
-                Exception = ex;
+                StatusMessage = Strings.Cancelled_Operation;
+                return false;
+            }
+            finally
+            {
+                InitlizeWatcher();
             }
 
-            if (result) InitlizeWatcher();
-
-            return result;
+            return true;
         }
 
-        public override void Sort(SortingViewModel sortingViewModel)
+        public void Sort(SortingViewModel sortingViewModel, CancellationToken token)
         {
+            if (token.IsCancellationRequested) return;
+            
             bool isEmpty = !IsInitialized;
             if (isEmpty) return;
 
-            foreach (var item in Items)
+            List<Task> tasks = new List<Task>();
+
+            foreach(var item in Items)
             {
-                item.Sort(sortingViewModel);
+                Task task = null;
+
+                if (item is DirectoryInfoViewModel directoryItem)
+                {
+                    task = Task.Factory.StartNew(() =>
+                    {
+                        if (token.IsCancellationRequested)
+                        {
+                            token.ThrowIfCancellationRequested();
+                        }
+
+                        var threadId = Thread.CurrentThread.ManagedThreadId;
+
+                        if (CurrentMaxThread < threadId)
+                        {
+                            CurrentMaxThread = threadId;
+                        }
+
+                        Debug.WriteLine("Thread id: " + threadId);
+                        Debug.WriteLine("Sorting directory: " + item?.Model?.Name);
+                        directoryItem?.Sort(sortingViewModel, token);
+                        Debug.WriteLine("Completed: " + directoryItem?.Model?.Name);
+                    }, token, sortingViewModel.TaskCreationOptions, TaskScheduler.Default);
+
+                    if (item?.Model?.FullName != null)
+                    {
+                        StatusMessage = Strings.Created_Sorting + " " + item.Model.FullName;
+                    }
+                }
+
+                if (task != null) tasks.Add(task);
             }
+
+            try
+            {
+                Task.WaitAll(tasks.ToArray());
+            }
+            catch (AggregateException ex)
+            {
+                StatusMessage = Strings.Cancelled_Operation;
+                return;
+            }
+            catch(OperationCanceledException)
+            {
+                StatusMessage = Strings.Cancelled_Operation;
+                return;
+            }
+
+            if (token.IsCancellationRequested) return;
 
             var orderableItems = Items.OrderBy(OrderByType);
 
@@ -144,7 +238,6 @@ namespace PT_137131.ViewModel
                 var oldIndex = Items.IndexOf(item);
                 if (newIndex > -1)
                 {
-
                     Items.Move(oldIndex, newIndex);
                 }
             }
@@ -159,29 +252,61 @@ namespace PT_137131.ViewModel
             return 1;
         }
 
-        private void ReadCatalogs()
+        private void ReadCatalogs(CancellationToken token)
         {
             foreach (var dirName in Directory.GetDirectories(path))
             {
-                var dirInfo = new DirectoryInfo(dirName);
-                DirectoryInfoViewModel itemViewModel = new DirectoryInfoViewModel(this);
-                itemViewModel.Model = dirInfo;
-                Items.Add(itemViewModel);
+                try
+                {
+                    if (token.IsCancellationRequested)
+                    {
+                        token.ThrowIfCancellationRequested();
+                    }
 
-                //recurrecny load
-                itemViewModel.Open(dirName);
+                    var dirInfo = new DirectoryInfo(dirName);
+                    DirectoryInfoViewModel itemViewModel = new DirectoryInfoViewModel(this);
+                    itemViewModel.Model = dirInfo;
+                    Items.Add(itemViewModel);
+
+                    //recurrecny load
+                    itemViewModel.Open(dirName, token);
+                }
+                catch (OperationCanceledException ex)
+                {
+                    throw ex;
+                }
+                catch (Exception ex)
+                {
+                    // do nothing
+                }
             }
         }
 
-        private void ReadFiles()
+        private void ReadFiles(CancellationToken token)
         {
             if (path == null) return;
             foreach (var fileName in Directory.GetFiles(path))
             {
-                var fileInfo = new FileInfo(fileName);
-                FileInfoViewModel itemViewModel = new FileInfoViewModel(this);
-                itemViewModel.Model = fileInfo;
-                Items.Add(itemViewModel);
+                try
+                {
+                    if (token.IsCancellationRequested)
+                    {
+                        token.ThrowIfCancellationRequested();
+                    }
+
+                    var fileInfo = new FileInfo(fileName);
+                    FileInfoViewModel itemViewModel = new FileInfoViewModel(this);
+                    itemViewModel.Model = fileInfo;
+                    Items.Add(itemViewModel);
+                }
+                catch (OperationCanceledException ex)
+                {
+                    throw ex;
+                }
+                catch (Exception ex)
+                {
+                    // do nothing
+                }
             }
         }
 
@@ -206,7 +331,17 @@ namespace PT_137131.ViewModel
         private void OnFileSystemChanged(FileSystemEventArgs e)
         {
             if (e.ChangeType == WatcherChangeTypes.Changed) return;
-            if (path != null) Open(path);
+            if (path != null)
+            {
+                try
+                {
+                    Open(path, token);
+                }
+                catch (Exception ex)
+                {
+                    // do nothing
+                }
+            }
         }
     }
 }

@@ -8,6 +8,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Forms;
@@ -19,6 +20,9 @@ namespace PT_137131.ViewModel
     {
         private DirectoryInfoViewModel root;
         private SortingViewModel sorting;
+        private string statusMessage;
+        private int currentMaxThread;
+        private CancellationTokenSource source;
 
         public static readonly string[] TextFilesExtensions = new string[] { ".txt", ".ini", ".log" };
         public event EventHandler<FileInfoViewModel> OnOpenFileRequest;
@@ -33,6 +37,7 @@ namespace PT_137131.ViewModel
         public ICommand CreateFileCommand { get; private set; }
         public ICommand DeleteFileCommand { get; private set; }
         public ICommand SelecFileCommand { get; private set; }
+        public ICommand OnCancelOperationCommand { get; private set; }
 
         public DirectoryInfoViewModel Root
         {
@@ -64,11 +69,38 @@ namespace PT_137131.ViewModel
             }
         }
 
+        public string StatusMessage
+        {
+            get { return statusMessage; }
+            set
+            {
+                if (value != null && statusMessage != value)
+                {
+                    statusMessage = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public int CurrentMaxThread
+        {
+            get { return currentMaxThread; }
+            set
+            {
+                if (currentMaxThread != value)
+                {
+                    currentMaxThread = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
         public FileExplorer()
         {
             NotifyPropertyChanged(nameof(Lang));
 
             root = new DirectoryInfoViewModel(this);
+            root.PropertyChanged += Root_PropertyChanged;
             NotifyPropertyChanged(nameof(Root));
 
             sorting = new SortingViewModel();
@@ -76,9 +108,9 @@ namespace PT_137131.ViewModel
             sorting.Direction = Enum.Direction.Ascending;
             NotifyPropertyChanged(nameof(Sorting));
 
-            Sorting.PropertyChanged += OnSortingPropertyChanged;
+            Sorting.PropertyChanged += OnSortingPropertyChangedAsync;
 
-            OpenRootFolderCommand = new RelayCommand(OpenRootFolderExecute);
+            OpenRootFolderCommand = new RelayCommand(OpenRootFolderExecuteAsync);
             SortRootFolderCommand = new RelayCommand(SortRootFolderExecute, CanExecuteSort);
             ExitCommand = new RelayCommand(ExitExecute);
 
@@ -87,6 +119,36 @@ namespace PT_137131.ViewModel
             CreateFileCommand = new RelayCommand(OnCreateFileCommand);
             DeleteFileCommand = new RelayCommand(OnDeleteFileCommand);
             SelecFileCommand = new RelayCommand(OnSelectFileCommand);
+
+            OnCancelOperationCommand = new RelayCommand(OnCancelClicked);
+        }
+
+        private void OnCancelClicked(object obj)
+        {
+            if (source != null)
+            {
+                try
+                {
+                    source.Cancel();
+                }
+                catch (Exception ex)
+                {
+                    // do nothing
+                }
+            }
+        }
+
+        private void Root_PropertyChanged(object? sender, PropertyChangedEventArgs args)
+        {
+            if (args.PropertyName == "StatusMessage" && sender is FileSystemInfoViewModel viewModel)
+            {
+                this.StatusMessage = viewModel.StatusMessage;
+            }
+            
+            if (args.PropertyName == "CurrentMaxThread" && sender is FileSystemInfoViewModel viewModelThread)
+            {
+                this.currentMaxThread = viewModelThread.CurrentMaxThread;
+            }
         }
 
         public string GetFileContent(FileInfoViewModel viewModel)
@@ -195,9 +257,29 @@ namespace PT_137131.ViewModel
             OnSelectFileRequest.Invoke(this, viewModel);
         }
 
-        private void OnSortingPropertyChanged(object? sender, PropertyChangedEventArgs e)
+        private async void OnSortingPropertyChangedAsync(object? sender, PropertyChangedEventArgs e)
         {
-            Root.Sort(Sorting);
+            source = new CancellationTokenSource();
+
+            await Task.Factory.StartNew(() =>
+            {
+                try
+                {
+                    Root.Sort(Sorting, source.Token);
+                    Debug.WriteLine("Max thred id: " + CurrentMaxThread);
+                    Debug.WriteLine("=================");
+                    Root.CurrentMaxThread = 0;
+                }
+                catch(Exception)
+                {
+                    StatusMessage = Strings.Cancelled_Operation;
+                }
+                finally
+                {
+                    source.Dispose();
+                    source = new CancellationTokenSource();
+                }
+            }, source.Token);
         }
 
         private void ExitExecute(object parameter)
@@ -213,26 +295,44 @@ namespace PT_137131.ViewModel
             window.Close();
         }
 
-        private void OpenRootFolderExecute(object parameter)
+        private async void OpenRootFolderExecuteAsync(object parameter)
         {
+            source = new CancellationTokenSource();
+
             var dlg = new FolderBrowserDialog() { Description = Strings.Directory_Description };
             if (dlg.ShowDialog() == DialogResult.OK)
             {
-                var path = dlg.SelectedPath;
-                OpenRoot(path);
+                try
+                {
+                    await Task.Factory.StartNew(() =>
+                    {
+                        StatusMessage = Strings.Loading;
+                        var path = dlg.SelectedPath;
+                        bool result = Root.Open(path, source.Token);
+                        if (result) StatusMessage = Strings.Ready;
+                    }, source.Token);
+                }
+                catch(OperationCanceledException)
+                {
+                    StatusMessage = Strings.Cancelled_Operation;
+                }
+                finally
+                {
+                    source.Dispose();
+                    source = new CancellationTokenSource();
+                }
             }
-
-            Root.Sort(Sorting);
         }
 
-        private void OpenRoot(string path)
+        private void OpenRoot(string path, CancellationToken token)
         {
-            Root.Open(path);
+            //Root.Open(path, token);
         }
 
         private void SortRootFolderExecute(object parameter)
         {
             Window window = new SortingDialog(Sorting);
+            window.Title = Strings.SortingDialog;
             window.ShowDialog();
         }
 

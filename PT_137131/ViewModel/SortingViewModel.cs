@@ -11,6 +11,7 @@ namespace PT_137131.ViewModel
     {
         private SortBy sortBy;
         private Direction direction;
+        private TaskCreationOptions taskCreationOptions;
 
         public SortBy SortBy
         {
@@ -26,6 +27,12 @@ namespace PT_137131.ViewModel
         {
             get { return direction; }
             set { direction = value; NotifyPropertyChanged(); }
+        }
+
+        public TaskCreationOptions TaskCreationOptions
+        {
+            get { return taskCreationOptions; }
+            set { taskCreationOptions = value; NotifyPropertyChanged(); }
         }
     }
 }

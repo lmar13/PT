@@ -3,13 +3,15 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:PT_137131.DialogWindow" xmlns:viewmodel="clr-namespace:PT_137131.ViewModel" d:DataContext="{d:DesignInstance Type=viewmodel:SortingViewModel}"
+        xmlns:local="clr-namespace:PT_137131.DialogWindow" 
+        xmlns:viewmodel="clr-namespace:PT_137131.ViewModel" d:DataContext="{d:DesignInstance Type=viewmodel:SortingViewModel}"
         mc:Ignorable="d"
         Title="SortingDialog"
-        Width="266" Height="284">
+        Width="266" Height="400">
     <Window.Resources>
         <local:SortByBoolConverter x:Key="SortByBoolConverter"/>
         <local:DirectionBoolConverter x:Key="DirectionBoolConverter" />
+        <local:TaskCreationOptionConverter x:Key="TaskCreationOptionConverter" />
         <Style x:Key="{x:Type RadioButton}" TargetType="{x:Type RadioButton}">
             <Setter Property="Margin" Value="5" />
             <Setter Property="HorizontalAlignment" Value="Left" />
@@ -51,6 +53,26 @@
                 IsChecked="{Binding Direction, Converter={StaticResource DirectionBoolConverter}, ConverterParameter=1}"
                 GroupName="sortOrder" Name="Descending">
                 <Label Content="{Binding Source={StaticResource Strings}, Path=Descending_Order}"/>
+            </RadioButton>
+
+            <Label Content="Strategia podziału zadań:"/>
+            <RadioButton
+                  IsChecked="{Binding TaskCreationOptions, Converter={StaticResource TaskCreationOptionConverter}, ConverterParameter=0}"
+                GroupName="taskExecuteGroup" Name="None"
+                >
+                <Label Content="{Binding Source={StaticResource Strings}, Path=None}"></Label>
+            </RadioButton>
+            <RadioButton
+                  IsChecked="{Binding TaskCreationOptions, Converter={StaticResource TaskCreationOptionConverter}, ConverterParameter=1}"
+                GroupName="taskExecuteGroup" Name="PreferFairness"
+                >
+                <Label Content="{Binding Source={StaticResource Strings}, Path=Prefer_Fairness}"></Label>
+            </RadioButton>
+            <RadioButton
+                  IsChecked="{Binding TaskCreationOptions, Converter={StaticResource TaskCreationOptionConverter}, ConverterParameter=2}"
+                GroupName="taskExecuteGroup" Name="LongRunning"
+                >
+                <Label Content="{Binding Source={StaticResource Strings}, Path=Long_Running}"></Label>
             </RadioButton>
         </StackPanel>
     </Grid>

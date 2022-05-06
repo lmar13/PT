@@ -17,6 +17,8 @@ namespace PT_137131.ViewModel
         private string? imageSource;
         private string? extension;
         private long size;
+        private string statusMessage;
+        private int currentMaxThread;
 
         public FileSystemInfoViewModel(ViewModelBase owner)
         {
@@ -121,9 +123,30 @@ namespace PT_137131.ViewModel
             }
         }
 
-        public virtual void Sort(SortingViewModel sorting)
+        public string StatusMessage
         {
+            get { return statusMessage; }
+            set
+            {
+                if (value != null && statusMessage != value)
+                {
+                    statusMessage = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
 
+        public int CurrentMaxThread
+        {
+            get => currentMaxThread;
+            set
+            {
+                if (value != currentMaxThread)
+                {
+                    currentMaxThread = value;
+                    NotifyPropertyChanged();
+                }
+            }
         }
 
         protected void SetProperties(FileSystemInfo model)

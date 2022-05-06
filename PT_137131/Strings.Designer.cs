@@ -70,6 +70,24 @@ namespace PT_137131 {
         }
         
         /// <summary>
+        /// Wyszukuje zlokalizowany ciąg podobny do ciągu Cancel.
+        /// </summary>
+        public static string Cancel {
+            get {
+                return ResourceManager.GetString("Cancel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        /// Wyszukuje zlokalizowany ciąg podobny do ciągu Operation has been cancelled succesfully.
+        /// </summary>
+        public static string Cancelled_Operation {
+            get {
+                return ResourceManager.GetString("Cancelled_Operation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         /// Wyszukuje zlokalizowany ciąg podobny do ciągu Close.
         /// </summary>
         public static string Close {
@@ -84,6 +102,15 @@ namespace PT_137131 {
         public static string Create_File {
             get {
                 return ResourceManager.GetString("Create_File", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        /// Wyszukuje zlokalizowany ciąg podobny do ciągu Sorting task has been created for:.
+        /// </summary>
+        public static string Created_Sorting {
+            get {
+                return ResourceManager.GetString("Created_Sorting", resourceCulture);
             }
         }
         
@@ -142,6 +169,24 @@ namespace PT_137131 {
         }
         
         /// <summary>
+        /// Wyszukuje zlokalizowany ciąg podobny do ciągu Long Running.
+        /// </summary>
+        public static string Long_Running {
+            get {
+                return ResourceManager.GetString("Long_Running", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        /// Wyszukuje zlokalizowany ciąg podobny do ciągu None.
+        /// </summary>
+        public static string None {
+            get {
+                return ResourceManager.GetString("None", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         /// Wyszukuje zlokalizowany ciąg podobny do ciągu Open Directory.
         /// </summary>
         public static string Open_Directory {
@@ -165,6 +210,24 @@ namespace PT_137131 {
         public static string Placeholder {
             get {
                 return ResourceManager.GetString("Placeholder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        /// Wyszukuje zlokalizowany ciąg podobny do ciągu Prefer_Fairness.
+        /// </summary>
+        public static string Prefer_Fairness {
+            get {
+                return ResourceManager.GetString("Prefer_Fairness", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        /// Wyszukuje zlokalizowany ciąg podobny do ciągu Ready.
+        /// </summary>
+        public static string Ready {
+            get {
+                return ResourceManager.GetString("Ready", resourceCulture);
             }
         }
         
@@ -228,6 +291,15 @@ namespace PT_137131 {
         public static string Sorting {
             get {
                 return ResourceManager.GetString("Sorting", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        /// Wyszukuje zlokalizowany ciąg podobny do ciągu Sorting dialog.
+        /// </summary>
+        public static string SortingDialog {
+            get {
+                return ResourceManager.GetString("SortingDialog", resourceCulture);
             }
         }
     }

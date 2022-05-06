@@ -174,4 +174,28 @@
   <data name="Descending_Order" xml:space="preserve">
     <value>Descending</value>
   </data>
+  <data name="SortingDialog" xml:space="preserve">
+    <value>Sorting dialog</value>
+  </data>
+  <data name="Cancelled_Operation" xml:space="preserve">
+    <value>Operation has been cancelled succesfully</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="Created_Sorting" xml:space="preserve">
+    <value>Sorting task has been created for:</value>
+  </data>
+  <data name="Long_Running" xml:space="preserve">
+    <value>Long Running</value>
+  </data>
+  <data name="None" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="Prefer_Fairness" xml:space="preserve">
+    <value>Prefer_Fairness</value>
+  </data>
+  <data name="Ready" xml:space="preserve">
+    <value>Ready</value>
+  </data>
 </root>
